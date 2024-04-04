@@ -29,7 +29,7 @@ def claim_fraud_prediction(input_data):
  
 def main():
     # Giving a title
-    #st.title('Automobile Insurance Claim Anomally Prediction Web App')
+    #st.title('Automobile Insurance Claim Anomaly Prediction Web App')
 
      # Set page configuration
     #st.set_page_config(layout="wide")
