@@ -68,7 +68,7 @@ def main():
     )
  
     # Creating a box around the title
-    st.markdown('<div class="title-box"><h1 class="title">Automobile Insurance Claim Anomally Prediction</h1></div>', unsafe_allow_html=True)
+    st.markdown('<div class="title-box"><h1 class="title">Automobile Insurance Claim Anomaly Prediction Web App</h1></div>', unsafe_allow_html=True)
  
     # Upload data file
     uploaded_file = st.file_uploader("Upload CSV file", type=["csv"])
