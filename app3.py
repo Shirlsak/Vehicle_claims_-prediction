@@ -4,13 +4,21 @@ import streamlit as st
 import pandas as pd
 from sklearn import preprocessing
 from PIL import Image
+from sklearn.preprocessing import StandardScaler
 
 # Loading the saved model
-loaded_model = load('fraud_model.joblib')
+loaded_model = load('sk_model.joblib')
+
+# Create an instance of the StandardScaler
+scaler = StandardScaler()
 
 # Function for prediction
 def claim_fraud_prediction(input_data):
-    predictions = loaded_model.predict(input_data)
+    # Fit the StandardScaler on the training data
+    scaler.fit(input_data)
+    # Scale the input data
+    scaled_input_data = scaler.transform(input_data)
+    predictions = loaded_model.predict(scaled_input_data)
     return predictions
 
 def main():
@@ -55,7 +63,23 @@ def main():
     for feature_name in features:
         feature_value = st.sidebar.number_input(f"{feature_name}")
         input_features[feature_name] = feature_value
-    input_data_direct = pd.DataFrame([input_features])
+
+        # Create a DataFrame from the input features
+        input_data_direct = pd.DataFrame([input_features])
+
+       
+     # Code for prediction using input features directly
+    if st.sidebar.button('Predict Claim Status (Direct Input)'):
+         # Fit the StandardScaler on the training data
+        #scaler.fit(input_data_direct)
+        # Scale the input data using the fitted scaler
+        #scaled_input_data_direct = scaler.transform(input_data_direct)
+        predictions = claim_fraud_prediction(input_data_direct)
+        if predictions[0] == 0:
+            st.success('The claim is Normal')
+        else:
+            st.markdown('<span class="anomalous">The claim is Anomalous</span>', unsafe_allow_html=True)
+
 
     # Option for user to upload CSV file
     st.sidebar.subheader("Upload CSV file")
@@ -67,20 +91,17 @@ def main():
 
         # Code for prediction
         if st.sidebar.button('Predict Claim Status (CSV)'):
-            predictions = claim_fraud_prediction(data)
+             # Fit the StandardScaler on the training data
+            scaler.fit(data)
+            # Scale the input data
+            scaled_data = scaler.transform(data)
+            predictions = claim_fraud_prediction(scaled_data)
             for i, prediction in enumerate(predictions):
                 if prediction == 0:
                     st.success(f'The claim in row {i+1} is Normal')
                 else:
                     st.markdown(f'<span class="anomalous">The claim in row {i+1} is Anomalous</span>', unsafe_allow_html=True)
 
-    # Code for prediction using input features directly
-    if st.sidebar.button('Predict Claim Status (Direct Input)'):
-        predictions = claim_fraud_prediction(input_data_direct)
-        if predictions[0] == 0:
-            st.success('The claim is Normal')
-        else:
-            st.markdown('<span class="anomalous">The claim is Anomalous</span>', unsafe_allow_html=True)
-
+   
 if __name__ == '__main__':
     main()
